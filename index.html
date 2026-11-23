@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id" translate="no">
+<head>
+  <meta name="google" content="notranslate">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Lembar Sendu</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23f4ebd6'/></svg>" />
+  <meta name="description" content="Puisi interaktif berbentuk kotak: Lembar Sendu, Aku, Pena, Hidup, dan." />
+  <!-- Font opsional dari Google (butuh internet). Fallback: Georgia di CSS. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Latar kertas buku bergaris (kosong, warna krem) -->
+  <div class="kertas" aria-hidden="true"></div>
+
+  <!-- Kanvas tinta: goresan kuas mengikuti kursor / sentuhan -->
+  <canvas id="kanvas-tinta" aria-hidden="true"></canvas>
+
+  <!-- ===== LAYAR HUB: Lembar Sendu di tengah + empat sudut kotak ===== -->
+  <section id="layar-hub" class="layar aktif">
+    <header class="kepala-halaman">
+      <p class="judul-karya">Lembar Sendu</p>
+    </header>
+
+    <div class="panggung">
+      <div class="tulang-kotak">
+      <!-- Bingkai kotak utuh + empat diagonal, satu gaya, pathLength 1 supaya tidak bolong -->
+      <svg class="svg-kotak" viewBox="0 0 100 100" aria-hidden="true">
+        <rect id="bingkai" class="garis" pathLength="1" x="2" y="2" width="96" height="96" fill="none" />
+        <line id="jari-aku"   class="garis" pathLength="1" x1="40" y1="40" x2="2" y2="2" />
+        <line id="jari-pena"  class="garis" pathLength="1" x1="60" y1="40" x2="98" y2="2" />
+        <line id="jari-hidup" class="garis" pathLength="1" x1="60" y1="60" x2="98" y2="98" />
+        <line id="jari-dan"   class="garis" pathLength="1" x1="40" y1="60" x2="2" y2="98" />
+      </svg>
+
+      <!-- Penggalan di dalam empat segitiga X (clip-path + zona aman) -->
+      <div id="cincin-penggalan" class="cincin-penggalan" aria-hidden="true">
+        <div class="wilayah wilayah-aku">
+          <div class="rangkai-segi">
+            <span class="penggalan" data-bab="aku">Aku hanya diam</span>
+            <span class="penggalan" data-bab="aku">Mematung</span>
+            <span class="penggalan" data-bab="aku">Dan tenggelam</span>
+          </div>
+        </div>
+
+        <div class="wilayah wilayah-pena">
+          <div class="rangkai-segi">
+            <span class="penggalan" data-bab="pena">tulis asal</span>
+            <span class="penggalan" data-bab="pena">berkali-kali</span>
+            <span class="penggalan" data-bab="pena">menunggu</span>
+          </div>
+        </div>
+
+        <div class="wilayah wilayah-hidup">
+          <div class="rangkai-segi">
+            <span class="penggalan" data-bab="hidup">Duka hampa</span>
+            <span class="penggalan" data-bab="hidup">menari ria</span>
+            <span class="penggalan" data-bab="hidup">telah bahagia</span>
+          </div>
+        </div>
+
+        <div class="wilayah wilayah-dan">
+          <div class="rangkai-segi">
+            <span class="penggalan" data-bab="dan">wahai tuan</span>
+            <span class="penggalan" data-bab="dan">Penolong cinta</span>
+            <span class="penggalan" data-bab="dan">Pulang.</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" id="kata-buku">
+        <span>Lembar</span>
+        <span>Sendu</span>
+      </button>
+      <button type="button" class="sudut" data-bab="aku" hidden>Aku</button>
+      <button type="button" class="sudut" data-bab="pena" hidden>Pena</button>
+      <button type="button" class="sudut" data-bab="hidup" hidden>Hidup</button>
+      <button type="button" class="sudut" data-bab="dan" hidden>Dan.</button>
+      </div>
+    </div>
+
+    <p id="petunjuk-hub" class="petunjuk">arahkan ke Lembar Sendu</p>
+  </section>
+
+  <!-- ===== LAYAR PUISI: judul, lalu baris satu per satu ===== -->
+  <section id="layar-puisi" class="layar" hidden>
+    <p id="judul-puisi" class="judul-puisi"></p>
+    <div id="puisi" class="puisi" aria-live="polite"></div>
+    <button type="button" id="ilustrasi-kata" class="ilustrasi-kata" aria-hidden="true"></button>
+    <button type="button" id="tombol-kembali" class="tautan-kembali" hidden>kembali</button>
+    <button type="button" id="tombol-lanjut" class="tombol tombol-lanjut" hidden aria-hidden="true">Continue</button>
+  </section>
+
+  <!-- ===== LAYAR FINALE ===== -->
+  <section id="layar-akhir" class="layar" hidden>
+    <div class="halaman-terbuka">
+      <h2 id="judul-finale">Lembar Sendu</h2>
+      <div id="puisi-akhir" class="puisi-akhir" aria-live="polite"></div>
+      <button type="button" id="tombol-ulang" class="tombol" hidden>Mulai lagi</button>
+      <p id="kredit-akhir" class="kredit-akhir" hidden>@niluhanun</p>
+    </div>
+  </section>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
